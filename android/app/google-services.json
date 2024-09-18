@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "704766267174",
+    "project_id": "hotel-management-3e42b",
+    "storage_bucket": "hotel-management-3e42b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704766267174:android:5105a1cc6e9d49d1affbe7",
+        "android_client_info": {
+          "package_name": "com.kingrittik.hotel_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_-BxCcKUasxccTUPrcW-T28KZRkhz00A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
