@@ -1,6 +1,6 @@
 class RoomModel {
   final String id;
-  final String type; // Deluxe, Standard
+  final String type; // Deluxe, Standard, Suite
   final double price;
   final List<String> amenities; // like, Free Wi-fi, 2BHK, 1BHK, etc
   bool isBooked;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_management/providers/theme_provider.dart';
+import 'package:hotel_management/screens/guest/booking_history_screen.dart';
+import 'package:hotel_management/utils/kroute.dart';
 import 'package:provider/provider.dart';
 
 class GuestProfile extends StatelessWidget {
@@ -23,6 +25,15 @@ class GuestProfile extends StatelessWidget {
                   : 'Light Mode',
             ),
           ),
+          ListTile(
+            title: const Text('Booking History'),
+            onTap: () {
+              KRoute.push(
+                context: context,
+                page: const BookingHistoryScreen(),
+              );
+            },
+          )
         ],
       ),
     );

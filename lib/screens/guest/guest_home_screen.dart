@@ -20,9 +20,6 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Guest Dashboard'),
-      ),
       bottomNavigationBar: BottomNavigationBar(
         onTap: (value) {
           setState(() {
