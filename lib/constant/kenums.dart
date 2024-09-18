@@ -1,0 +1,1 @@
+enum KEnumUserRole { staff, guest }
