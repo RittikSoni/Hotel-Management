@@ -91,7 +91,7 @@ class KLoadingToast {
 
   static Future<void> showDialogMultipleButtons({
     required String title,
-    required String subtitle,
+    Widget? content,
     bool? barrierDismissible,
     bool? canpop,
     List<Widget>? widgets,
@@ -108,23 +108,16 @@ class KLoadingToast {
               title,
               textAlign: TextAlign.center,
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  subtitle,
-                  textAlign: TextAlign.center,
-                ),
-                widgets != null
-                    ? Row(
-                        mainAxisAlignment:
-                            mainAxisAlignment ?? MainAxisAlignment.spaceBetween,
-                        children: widgets,
-                      )
-                    : const SizedBox(),
-              ],
-            ),
+            actions: [
+              widgets != null
+                  ? Row(
+                      mainAxisAlignment:
+                          mainAxisAlignment ?? MainAxisAlignment.spaceBetween,
+                      children: widgets,
+                    )
+                  : const SizedBox(),
+            ],
+            content: content,
           ),
         );
       },
