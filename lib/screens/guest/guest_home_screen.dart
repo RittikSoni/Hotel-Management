@@ -21,6 +21,7 @@ class _GuestHomeScreenState extends State<GuestHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentScreenIndex,
         onTap: (value) {
           setState(() {
             currentScreenIndex = value;

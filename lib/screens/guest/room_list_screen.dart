@@ -143,8 +143,10 @@ class RoomListScreenState extends State<RoomListScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Expanded(
-                                      child: FlutterLogo(size: 100.0)),
+                                  Expanded(
+                                      child: Image.asset(
+                                          'assets/images/${room.type.toLowerCase()}.png',
+                                          height: 100.0)),
                                   ListTile(
                                     title:
                                         Text('${room.type} - \$${room.price}'),
