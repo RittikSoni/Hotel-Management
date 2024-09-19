@@ -85,6 +85,7 @@ class AuthService {
       required String password,
       KEnumUserRole? role}) async {
     try {
+      KLoadingToast.startLoading();
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
@@ -164,6 +165,8 @@ class AuthService {
 
         throw 'Something went wrong during login $e';
       }
+    } finally {
+      KLoadingToast.stopLoading();
     }
     KLoadingToast.showToast(
         msg: ErrorsHandlerValues.defaultEndUserErrorMessage);

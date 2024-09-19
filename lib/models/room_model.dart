@@ -5,12 +5,17 @@ class RoomModel {
   final List<String> amenities; // like, Free Wi-fi, 2BHK, 1BHK, etc
   bool isBooked;
 
+  DateTime? checkInDate;
+  DateTime? checkOutDate;
+
   RoomModel({
     required this.id,
     required this.type,
     required this.price,
     required this.amenities,
     this.isBooked = false,
+    this.checkInDate,
+    this.checkOutDate,
   });
 
   factory RoomModel.fromMap(Map<String, dynamic> map) {
@@ -20,6 +25,12 @@ class RoomModel {
       price: map['price'],
       amenities: List<String>.from(map['amenities']),
       isBooked: map['isBooked'] ?? false,
+      checkInDate: map['checkInDate'] != null
+          ? DateTime.parse(map['checkInDate'])
+          : null,
+      checkOutDate: map['checkOutDate'] != null
+          ? DateTime.parse(map['checkOutDate'])
+          : null,
     );
   }
 
@@ -30,6 +41,8 @@ class RoomModel {
       'price': price,
       'amenities': amenities,
       'isBooked': isBooked,
+      if (checkInDate != null) 'checkInDate': checkInDate?.toIso8601String(),
+      if (checkOutDate != null) 'checkOutDate': checkOutDate?.toIso8601String(),
     };
   }
 }

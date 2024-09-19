@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class Commonfunctions {
@@ -13,5 +15,18 @@ class Commonfunctions {
     return SizedBox(
       height: 20.0 * (gapMultiplier ?? 1.0),
     );
+  }
+
+  static String generateUniqueCode() {
+    // Generate a random 6-digit number
+    final String randomValue = (100000 + Random().nextInt(900000)).toString();
+
+    // Get the current timestamp in milliseconds
+    final int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+    // Combine the timestamp and random number to create a unique code
+    final String uniqueCode = '$timestamp$randomValue';
+
+    return uniqueCode;
   }
 }

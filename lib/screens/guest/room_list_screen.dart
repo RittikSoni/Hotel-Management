@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_management/components/reusable_textformfield.dart';
+import 'package:hotel_management/models/room_model.dart';
+import 'package:hotel_management/services/booking_service.dart';
 import 'package:hotel_management/utils/common_functions.dart';
 import 'package:hotel_management/utils/kloading.dart';
+import 'package:hotel_management/utils/kroute.dart';
 import 'package:provider/provider.dart';
 import '../../providers/room_provider.dart';
 
@@ -15,6 +19,16 @@ class RoomListScreenState extends State<RoomListScreen> {
   bool? isAvailable;
   String? selectedRoomType;
   double? maxPrice;
+
+  TextEditingController fromDateController = TextEditingController();
+  TextEditingController toDateController = TextEditingController();
+
+  @override
+  void dispose() {
+    fromDateController.dispose();
+    toDateController.dispose();
+    super.dispose();
+  }
 
   final List<String> roomTypes = ['Deluxe', 'Standard', 'Suite'];
 
@@ -189,13 +203,13 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                             children: [
                                                               Expanded(
                                                                 child:
-                                                                    TextField(
-                                                                  decoration:
-                                                                      const InputDecoration(
-                                                                          label:
-                                                                              Text('From')),
-                                                                  onTap: () {
-                                                                    showDatePicker(
+                                                                    ReusableTextFormField(
+                                                                  controller:
+                                                                      fromDateController,
+                                                                  label: 'From',
+                                                                  onTap:
+                                                                      () async {
+                                                                    final date = await showDatePicker(
                                                                         context:
                                                                             context,
                                                                         firstDate:
@@ -205,6 +219,9 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                                             2035,
                                                                             1,
                                                                             1));
+                                                                    fromDateController
+                                                                            .text =
+                                                                        date.toString();
                                                                   },
                                                                 ),
                                                               ),
@@ -216,22 +233,25 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                                           0.5),
                                                               Expanded(
                                                                 child:
-                                                                    TextField(
-                                                                  decoration:
-                                                                      const InputDecoration(
-                                                                          label:
-                                                                              Text('To')),
-                                                                  onTap: () {
-                                                                    showDatePicker(
+                                                                    ReusableTextFormField(
+                                                                  controller:
+                                                                      toDateController,
+                                                                  label: 'To',
+                                                                  onTap:
+                                                                      () async {
+                                                                    final date = await showDatePicker(
                                                                         context:
                                                                             context,
-                                                                        firstDate:
+                                                                        firstDate: DateTime.tryParse(fromDateController.text.trim()) ??
                                                                             DateTime
                                                                                 .now(),
                                                                         lastDate: DateTime(
                                                                             2035,
                                                                             1,
                                                                             1));
+                                                                    toDateController
+                                                                            .text =
+                                                                        date.toString();
                                                                   },
                                                                 ),
                                                               ),
@@ -244,9 +264,17 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                               .center,
                                                       widgets: [
                                                     ElevatedButton(
-                                                      onPressed: () {
-                                                        // BOOK NOW
-                                                      },
+                                                      onPressed:
+                                                          room.isBooked == true
+                                                              ? null
+                                                              : () async {
+                                                                  await _handleBookRoom(
+                                                                      room);
+                                                                  Navigator.pop(
+                                                                    navigatorKey
+                                                                        .currentContext!,
+                                                                  );
+                                                                },
                                                       child: const Text(
                                                           'Book Now'),
                                                     )
@@ -265,5 +293,30 @@ class RoomListScreenState extends State<RoomListScreen> {
         ],
       ),
     );
+  }
+
+  _handleBookRoom(RoomModel room) async {
+    try {
+      await BookingService.bookRoom(
+        roomData: RoomModel(
+          id: room.id,
+          type: room.type,
+          price: room.price,
+          amenities: room.amenities,
+          checkInDate: DateTime.parse(fromDateController.text),
+          checkOutDate: DateTime.parse(
+            toDateController.text.trim(),
+          ),
+        ),
+      );
+      final roomProvider = Provider.of<RoomProvider>(
+          navigatorKey.currentContext!,
+          listen: false);
+
+      await roomProvider.fetchRooms(
+          isAvailable: isAvailable,
+          roomType: selectedRoomType,
+          maxPrice: maxPrice);
+    } catch (_) {}
   }
 }

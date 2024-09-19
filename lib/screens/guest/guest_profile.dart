@@ -29,12 +29,7 @@ class GuestProfile extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Booking History'),
-            onTap: () {
-              KRoute.push(
-                context: context,
-                page: const BookingHistoryScreen(),
-              );
-            },
+            onTap: () {},
           ),
           ListTile(
             title: const Text('Logout'),
