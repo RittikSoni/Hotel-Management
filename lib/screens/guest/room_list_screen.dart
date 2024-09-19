@@ -219,9 +219,12 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                                             2035,
                                                                             1,
                                                                             1));
-                                                                    fromDateController
-                                                                            .text =
-                                                                        date.toString();
+                                                                    date != null
+                                                                        ? fromDateController.text =
+                                                                            Commonfunctions.dateFormatterFromIso8601(
+                                                                            date.toIso8601String(),
+                                                                          )
+                                                                        : null;
                                                                   },
                                                                 ),
                                                               ),
@@ -249,9 +252,12 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                                             2035,
                                                                             1,
                                                                             1));
-                                                                    toDateController
-                                                                            .text =
-                                                                        date.toString();
+                                                                    date != null
+                                                                        ? toDateController.text =
+                                                                            Commonfunctions.dateFormatterFromIso8601(
+                                                                            date.toIso8601String(),
+                                                                          )
+                                                                        : null;
                                                                   },
                                                                 ),
                                                               ),

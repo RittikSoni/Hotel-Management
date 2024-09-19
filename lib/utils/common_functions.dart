@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class Commonfunctions {
@@ -28,5 +28,18 @@ class Commonfunctions {
     final String uniqueCode = '$timestamp$randomValue';
 
     return uniqueCode;
+  }
+
+  /// Format timestamp in `dd-MM-yyyy` format
+  ///
+  /// iso8601String like "2023-10-25T13:30:00Z"
+  static String dateFormatterFromIso8601(String timestamp) {
+    // Parse the ISO 8601 string to a DateTime object
+    DateTime isoDate = DateTime.parse(timestamp).toLocal();
+
+    // Format the date into "dd-MM-yyyy" format
+    String formattedDate = DateFormat('dd-MM-yyyy').format(isoDate);
+
+    return formattedDate;
   }
 }

@@ -12,6 +12,7 @@ class GuestProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<KThemeProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
       body: Column(
@@ -29,7 +30,14 @@ class GuestProfile extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Booking History'),
-            onTap: () {},
+            onTap: () {
+              userProvider.user != null
+                  ? KRoute.push(
+                      context: context,
+                      page: BookingListScreen(
+                          userEmail: userProvider.user!.email))
+                  : null;
+            },
           ),
           ListTile(
             title: const Text('Logout'),
