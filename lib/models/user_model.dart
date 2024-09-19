@@ -3,13 +3,20 @@ import 'package:hotel_management/models/booking_model.dart';
 class UserModel {
   final String id;
   final String name;
+  final String email;
   final String role; // 'guest' or 'staff'
   final List<BookingModel>? bookings; // Allow null for bookings
+
+  DateTime createdAt;
+  DateTime updatedAt;
 
   UserModel({
     required this.id,
     required this.name,
+    required this.email,
     required this.role,
+    required this.createdAt,
+    required this.updatedAt,
     this.bookings,
   });
 
@@ -24,8 +31,11 @@ class UserModel {
     return UserModel(
       id: map['id'],
       name: map['name'],
+      email: map['email'],
       role: map['role'],
       bookings: bookings,
+      createdAt: DateTime.parse(map['createdAt']),
+      updatedAt: DateTime.parse(map['updatedAt']),
     );
   }
 
@@ -33,8 +43,11 @@ class UserModel {
     return {
       'id': id,
       'name': name,
+      'email': email,
       'role': role,
       'bookings': bookings?.map((b) => b.toMap()).toList(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 

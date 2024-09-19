@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotel_management/providers/auth_provider.dart';
+import 'package:hotel_management/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class BookingHistoryScreen extends StatelessWidget {
@@ -7,7 +7,7 @@ class BookingHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<AuthProvider>(context).user;
+    final user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       appBar: AppBar(
