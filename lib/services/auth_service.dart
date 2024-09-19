@@ -4,7 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hotel_management/constant/kenums.dart';
 import 'package:hotel_management/constant/kstrings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hotel_management/screens/auth/login_home_screen.dart';
+import 'package:hotel_management/screens/guest/guest_home_screen.dart';
+import 'package:hotel_management/screens/staff/staff_dashboard_screen.dart';
 import 'package:hotel_management/utils/kloading.dart';
+import 'package:hotel_management/utils/kroute.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user_model.dart';
@@ -63,6 +67,10 @@ class AuthService {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString(KPrefsKeys.userData, jsonEncode(userJsonData));
 
+        KRoute.pushRemove(
+            context: navigatorKey.currentContext!,
+            page: const GuestHomeScreen());
+
         return userDataModel;
       }
       KLoadingToast.showToast(msg: ErrorsHandlerValues.registrationFailed);
@@ -93,7 +101,7 @@ class AuthService {
         try {
           final firestore = FirebaseFirestore.instance;
           final String userRole = role?.name ?? KEnumUserRole.guest.name;
-          final endUsersData;
+          final DocumentSnapshot<Map<String, dynamic>> endUsersData;
           if (userRole == KEnumUserRole.guest.name) {
             endUsersData = await firestore
                 .doc('users/guests')
@@ -102,8 +110,8 @@ class AuthService {
                 .get();
           } else {
             endUsersData = await firestore
-                .doc('users/staff')
-                .collection('staff')
+                .doc('users/staffs')
+                .collection('staffs')
                 .doc(email)
                 .get();
           }
@@ -130,7 +138,15 @@ class AuthService {
                 await SharedPreferences.getInstance();
             await prefs.setString(
                 KPrefsKeys.userData, jsonEncode(userJsonData));
-
+            if (userDataModel.role == KEnumUserRole.staff.name) {
+              KRoute.pushRemove(
+                  context: navigatorKey.currentContext!,
+                  page: const StaffDashboardScreen());
+            } else {
+              KRoute.pushRemove(
+                  context: navigatorKey.currentContext!,
+                  page: const GuestHomeScreen());
+            }
             return userDataModel;
           }
           KLoadingToast.showToast(msg: ErrorsHandlerValues.notARegisterUser);
@@ -179,5 +195,7 @@ class AuthService {
 
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    KRoute.pushRemove(
+        context: navigatorKey.currentContext!, page: const LoginScreen());
   }
 }

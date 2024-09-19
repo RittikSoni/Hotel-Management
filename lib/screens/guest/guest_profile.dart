@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hotel_management/providers/theme_provider.dart';
 import 'package:hotel_management/providers/user_provider.dart';
 import 'package:hotel_management/screens/auth/login_home_screen.dart';
-import 'package:hotel_management/screens/guest/booking_history_screen.dart';
+import 'package:hotel_management/screens/guest/booking_list_screen.dart';
 import 'package:hotel_management/utils/kroute.dart';
 import 'package:provider/provider.dart';
 

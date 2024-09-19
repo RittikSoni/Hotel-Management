@@ -19,12 +19,13 @@ class BookingService {
           .collection('bookings')
           .doc(currentUser?.email)
           .collection('bookings')
-          .doc()
+          .doc(roomData.id)
           .set(roomData.toMap());
       await firestore.collection('rooms').doc(roomData.id).update(
         {'isBooked': true},
       );
     } catch (e) {
+      print(e);
       KLoadingToast.showToast(
           msg: 'Something went wrong, please try again later.');
       throw '$e';

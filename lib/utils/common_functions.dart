@@ -42,4 +42,14 @@ class Commonfunctions {
 
     return formattedDate;
   }
+
+  /// dateString in dd-MM-yyyy format
+  static String convertToIso8601(String dateString) {
+    // Parse the date string using the custom input format
+    DateFormat format = DateFormat('dd-MM-yyyy');
+    DateTime dateTime = format.parse(dateString);
+
+    // Return the ISO 8601 formatted string
+    return dateTime.toIso8601String();
+  }
 }

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hotel_management/constant/kenums.dart';
 import 'package:hotel_management/models/room_model.dart';
+import 'package:hotel_management/providers/user_provider.dart';
 import 'package:hotel_management/services/booking_service.dart';
+import 'package:hotel_management/services/guests_service.dart';
+import 'package:hotel_management/utils/kroute.dart';
+import 'package:provider/provider.dart';
 
 class BookingListScreen extends StatefulWidget {
   final String userEmail;
@@ -55,10 +60,14 @@ class BookingListScreenState extends State<BookingListScreen> {
                 }
 
                 return ListView.builder(
+                  shrinkWrap: true,
                   itemCount: currentBookings.length,
                   itemBuilder: (context, index) {
                     final booking = currentBookings[index];
-                    return BookingCard(booking: booking);
+                    return BookingCard(
+                      booking: booking,
+                      guestMail: widget.userEmail,
+                    );
                   },
                 );
               },
@@ -89,10 +98,15 @@ class BookingListScreenState extends State<BookingListScreen> {
                 }
 
                 return ListView.builder(
+                  shrinkWrap: true,
                   itemCount: historyBookings.length,
                   itemBuilder: (context, index) {
                     final booking = historyBookings[index];
-                    return BookingCard(booking: booking);
+                    return BookingCard(
+                      booking: booking,
+                      isHistory: true,
+                      guestMail: widget.userEmail,
+                    );
                   },
                 );
               },
@@ -106,11 +120,19 @@ class BookingListScreenState extends State<BookingListScreen> {
 
 class BookingCard extends StatelessWidget {
   final RoomModel booking;
+  final String guestMail;
+  final bool isHistory;
 
-  const BookingCard({super.key, required this.booking});
+  const BookingCard(
+      {super.key,
+      required this.booking,
+      required this.guestMail,
+      this.isHistory = false});
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<UserProvider>(context).user;
+
     return Card(
       child: ListTile(
         title: Text('${booking.type} - \$${booking.price}'),
@@ -124,7 +146,25 @@ class BookingCard extends StatelessWidget {
                 'Check-out: ${booking.checkOutDate?.toLocal().toString().split(' ')[0]}'),
           ],
         ),
+        trailing:
+            currentUser?.role == KEnumUserRole.staff.name && isHistory == false
+                ? ElevatedButton(
+                    onPressed: () async {
+                      await _checkOutGuest(guestMail, booking);
+                    },
+                    child: const Text('Checkout'),
+                  )
+                : const SizedBox(),
       ),
     );
+  }
+
+  _checkOutGuest(String guestDetails, RoomModel roomDetails) async {
+    await GuestsService.checkoutGuest(
+      guestMail: guestDetails,
+      roomDetails: roomDetails,
+    );
+    Navigator.pop(navigatorKey.currentContext!);
+    Navigator.pop(navigatorKey.currentContext!);
   }
 }

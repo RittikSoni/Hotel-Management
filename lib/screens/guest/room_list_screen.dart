@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_management/components/reusable_textformfield.dart';
+import 'package:hotel_management/constant/kstrings.dart';
 import 'package:hotel_management/models/room_model.dart';
 import 'package:hotel_management/services/booking_service.dart';
 import 'package:hotel_management/utils/common_functions.dart';
 import 'package:hotel_management/utils/kloading.dart';
 import 'package:hotel_management/utils/kroute.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../providers/room_provider.dart';
 
@@ -243,15 +245,14 @@ class RoomListScreenState extends State<RoomListScreen> {
                                                                   onTap:
                                                                       () async {
                                                                     final date = await showDatePicker(
-                                                                        context:
-                                                                            context,
-                                                                        firstDate: DateTime.tryParse(fromDateController.text.trim()) ??
-                                                                            DateTime
-                                                                                .now(),
-                                                                        lastDate: DateTime(
-                                                                            2035,
-                                                                            1,
-                                                                            1));
+                                                                        context: context,
+                                                                        firstDate: DateTime.tryParse(
+                                                                              Commonfunctions.convertToIso8601(
+                                                                                fromDateController.text.trim(),
+                                                                              ),
+                                                                            ) ??
+                                                                            DateTime.now(),
+                                                                        lastDate: DateTime(2035, 1, 1));
                                                                     date != null
                                                                         ? toDateController.text =
                                                                             Commonfunctions.dateFormatterFromIso8601(
@@ -309,10 +310,11 @@ class RoomListScreenState extends State<RoomListScreen> {
           type: room.type,
           price: room.price,
           amenities: room.amenities,
-          checkInDate: DateTime.parse(fromDateController.text),
-          checkOutDate: DateTime.parse(
+          checkInDate: DateTime.parse(
+              Commonfunctions.convertToIso8601(fromDateController.text)),
+          checkOutDate: DateTime.parse(Commonfunctions.convertToIso8601(
             toDateController.text.trim(),
-          ),
+          )),
         ),
       );
       final roomProvider = Provider.of<RoomProvider>(
@@ -323,6 +325,10 @@ class RoomListScreenState extends State<RoomListScreen> {
           isAvailable: isAvailable,
           roomType: selectedRoomType,
           maxPrice: maxPrice);
-    } catch (_) {}
+    } catch (e) {
+      print(e);
+      KLoadingToast.showToast(
+          msg: ErrorsHandlerValues.defaultEndUserErrorMessage);
+    }
   }
 }

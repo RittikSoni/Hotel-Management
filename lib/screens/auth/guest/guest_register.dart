@@ -25,44 +25,52 @@ class _GuestRegisterState extends State<GuestRegister> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Form(
-            key: _formKey,
-            onChanged: () {
-              if (pressedLogin) {
-                _formKey.currentState!.validate();
-              }
-            },
-            child: Column(
-              children: [
-                ReusableTextFormField(
-                  controller: nameController,
-                  label: 'name',
-                ),
-                Commonfunctions.gapMultiplier(),
-                ReusableTextFormField(
-                  label: 'email',
-                  addEmailValidation: true,
-                  controller: emailController,
-                ),
-                Commonfunctions.gapMultiplier(),
-                ReusableTextFormField(
-                  obscureText: isSecure,
-                  label: 'Password',
-                  controller: passwordController,
-                ),
-              ],
+      appBar: AppBar(
+        title: const Text('Register'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Commonfunctions.gapMultiplier(),
+            Form(
+              key: _formKey,
+              onChanged: () {
+                if (pressedLogin) {
+                  _formKey.currentState!.validate();
+                }
+              },
+              child: Column(
+                children: [
+                  ReusableTextFormField(
+                    controller: nameController,
+                    label: 'name',
+                  ),
+                  Commonfunctions.gapMultiplier(),
+                  ReusableTextFormField(
+                    label: 'email',
+                    addEmailValidation: true,
+                    controller: emailController,
+                  ),
+                  Commonfunctions.gapMultiplier(),
+                  ReusableTextFormField(
+                    obscureText: isSecure,
+                    label: 'Password',
+                    controller: passwordController,
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: () async {
-              await _handleSignup();
-            },
-            child: const Text('Login'),
-          ),
-        ],
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () async {
+                await _handleSignup();
+              },
+              child: const Text('Register'),
+            ),
+            Commonfunctions.gapMultiplier(),
+          ],
+        ),
       ),
     );
   }
