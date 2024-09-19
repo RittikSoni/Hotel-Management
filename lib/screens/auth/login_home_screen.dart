@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hotel_management/components/reusable_textformfield.dart';
+import 'package:hotel_management/constant/kenums.dart';
 import 'package:hotel_management/constant/ktheme.dart';
 import 'package:hotel_management/screens/auth/guest/guest_register.dart';
 import 'package:hotel_management/screens/auth/staff/staff_login.dart';
@@ -102,9 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<UserProvider>(context, listen: false);
-      authProvider.login(
-        emailController.text,
-        passwordController.text,
+      authProvider.loginGuestStaff(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+        role: KEnumUserRole.guest,
       );
     }
   }

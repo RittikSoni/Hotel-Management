@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hotel_management/constant/kenums.dart';
 import 'package:hotel_management/constant/kstrings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hotel_management/utils/kloading.dart';
@@ -9,7 +10,80 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class AuthService {
-  static Future<UserModel?>? login(String email, String password) async {
+  static Future<void> _addMustFieldIfDocContainsOnlySubCollection(
+      {required String docPath}) async {
+    await FirebaseFirestore.instance.doc(docPath).set({
+      'readme': '_',
+      'forMoreInfo':
+          'https://firebase.google.com/docs/firestore/using-console?hl=en&authuser=0&_gl=1*1alzu52*_ga*ODYwNzgwODAyLjE2ODg2NTU4NDc.*_ga_CW55HF8NVT*MTcwMDM3MjM1Ny4xMzYuMS4xNzAwMzg3MTM3LjYwLjAuMA..#non-existent_ancestor_documents'
+    });
+  }
+
+  static Future<UserModel?>? registerGuest({
+    required String name,
+    required String emailAddress,
+    required String password,
+  }) async {
+    try {
+      KLoadingToast.startLoading();
+      final UserCredential credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailAddress, password: password);
+
+      if (credential.user != null) {
+        const String userRole = 'guest';
+
+        // Create a batch for Firestore writes
+        final WriteBatch batch = FirebaseFirestore.instance.batch();
+
+        // PREVENT ITALIC DOC (EMPTY DOC), SO JUST ADD RANDOM FIELD
+        _addMustFieldIfDocContainsOnlySubCollection(docPath: 'users/guests');
+
+        // Create a new user document in Firestore
+        final DocumentReference userDocRef =
+            FirebaseFirestore.instance.doc('users/guests/guests/$emailAddress');
+
+        final UserModel userDataModel = UserModel(
+          id: emailAddress,
+          name: name,
+          email: emailAddress,
+          role: userRole,
+          createdAt: DateTime.now().toLocal(),
+          updatedAt: DateTime.now().toLocal(),
+        );
+        batch.set(
+          userDocRef,
+          userDataModel.toMap(),
+        );
+
+        // Commit the batch
+        await batch.commit();
+
+        final Map<String, dynamic> userJsonData = userDataModel.toMap();
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(KPrefsKeys.userData, jsonEncode(userJsonData));
+
+        return userDataModel;
+      }
+      KLoadingToast.showToast(msg: ErrorsHandlerValues.registrationFailed);
+      throw ErrorsHandlerValues.registrationFailed;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        KLoadingToast.showToast(msg: ErrorsHandlerValues.emailInUse);
+        throw ErrorsHandlerValues.emailInUse;
+      } else {
+        KLoadingToast.showToast(msg: ErrorsHandlerValues.registrationFailed);
+        throw ErrorsHandlerValues.registrationFailed;
+      }
+    } finally {
+      KLoadingToast.stopLoading();
+    }
+  }
+
+  static Future<UserModel?>? loginGuestStaff(
+      {required String email,
+      required String password,
+      KEnumUserRole? role}) async {
     try {
       final UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -17,13 +91,21 @@ class AuthService {
       if (credential.user != null) {
         try {
           final firestore = FirebaseFirestore.instance;
-          const String userRole = 'guest';
-
-          final endUsersData = await firestore
-              .doc('users/guests')
-              .collection('guests')
-              .doc(email)
-              .get();
+          final String userRole = role?.name ?? KEnumUserRole.guest.name;
+          final endUsersData;
+          if (userRole == KEnumUserRole.guest.name) {
+            endUsersData = await firestore
+                .doc('users/guests')
+                .collection('guests')
+                .doc(email)
+                .get();
+          } else {
+            endUsersData = await firestore
+                .doc('users/staff')
+                .collection('staff')
+                .doc(email)
+                .get();
+          }
 
           bool isUsernameExist = endUsersData.exists;
 
@@ -38,7 +120,6 @@ class AuthService {
               name: endUsersData.get('name'),
               email: endUsersData.get('email'),
               role: userRole,
-              bookings: endUsersData.get('bookings'),
               createdAt: finalCreatedAt2,
               updatedAt: finalUpdateAt2,
             );
@@ -56,7 +137,7 @@ class AuthService {
         } catch (e) {
           KLoadingToast.showToast(
               msg: ErrorsHandlerValues.defaultEndUserErrorMessage);
-          throw 'Error during username check $e';
+          return KDummyModelData.notARegisteredUser;
         }
       }
       KLoadingToast.showToast(
@@ -90,12 +171,10 @@ class AuthService {
     throw 'Something went wrong during login process.';
   }
 
-  static Future<UserModel?> signup(
-      String email, String password, String role) async {
-    throw UnimplementedError();
-  }
-
   static Future<void> logout() async {
-    throw UnimplementedError();
+    await FirebaseAuth.instance.signOut();
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 }

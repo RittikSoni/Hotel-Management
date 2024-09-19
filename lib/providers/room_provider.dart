@@ -35,4 +35,8 @@ class RoomProvider with ChangeNotifier {
       rooms = [];
     }
   }
+
+  reset() {
+    rooms = null;
+  }
 }
